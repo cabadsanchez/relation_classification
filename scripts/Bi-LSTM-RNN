@@ -1,0 +1,15 @@
+#! /bin/bash
+
+source activate tfm
+
+git pull git@github.com:cabadsanchez/relation_classification.git
+
+cd relation_classification
+
+gsutil cp gs://storage-tfm/data_Bi-LSTM-RNN.pkl.gz dumps/
+
+python Bi-LSTM-RNN/Bi-LSTM-RNN.py >> dumps/Bi-LSTM-RNN.log
+
+gsutil cp -r dumps gs://storage-tfm/
+
+sudo shutdown -h now
