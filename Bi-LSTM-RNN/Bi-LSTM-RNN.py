@@ -216,8 +216,7 @@ tbCallBack = TensorBoard(log_dir='../dumps/logs/Bi-LSTM-RNN-1',
                          histogram_freq=1,
                          write_graph=True,
                          write_grads=True,
-                         batch_size=64,
-                         write_images=True)
+                         batch_size=64)
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss',
                               factor=0.1,
