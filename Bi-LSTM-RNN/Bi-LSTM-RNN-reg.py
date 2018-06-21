@@ -288,7 +288,7 @@ history = model.fit(x={
                         'after_postags': aps_train,
                         'after_hypernyms': ahs_train
                     },
-                    y={'output': labels_train}, batch_size=64, epochs=1,
+                    y={'output': labels_train}, batch_size=64, epochs=100,
                     validation_data=({
                                          'before_words': bws_valid,
                                          'before_lemmas': bls_valid,
