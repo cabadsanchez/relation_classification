@@ -129,7 +129,7 @@ if __name__ == '__main__':
     ent_dest = train[train.relation == 'Entity-Destination(e2,e1)']
     train = train.drop(ent_dest.iloc[0,:].name)
 
-    train, valid = train_test_split(train, test_size=.2, random_state=1337, stratify=train.rel_code)
+    train, valid = train_test_split(train, test_size=.1, random_state=1337, stratify=train.rel_code)
     train = pd.concat([train, ent_dest])
 
     words = {}
