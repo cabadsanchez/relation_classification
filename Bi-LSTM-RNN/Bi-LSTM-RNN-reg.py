@@ -139,30 +139,47 @@ after_concat = concatenate([afterWordsEmbeddings, afterLemmasEmbeddings,
 num_hidden_cells = 64
 base_lstm = LSTM(num_hidden_cells, return_sequences=True)
 
-beforeLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25)(before_concat)
+reg = l1_l2(.01, .01)
+
+beforeLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                  activity_regularizer=reg)(before_concat)
 beforeLstmDp = Dropout(.25)(beforeLstm)
 beforeLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25)(before_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                       activity_regularizer=reg)(before_concat)
 beforeLstm_backDp = Dropout(.25)(beforeLstm_back)
-formerLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25)(former_concat)
+formerLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                  activity_regularizer=reg)(former_concat)
 formerLstmDp = Dropout(.25)(formerLstm)
 formerLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25)(former_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                       activity_regularizer=reg)(former_concat)
 formerLstm_backDp = Dropout(.25)(formerLstm_back)
-middleLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25)(middle_concat)
+middleLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                  activity_regularizer=reg)(middle_concat)
 middleLstmDp = Dropout(.25)(middleLstm)
 middleLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25)(middle_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                       activity_regularizer=reg)(middle_concat)
 middleLstm_backDp = Dropout(.25)(middleLstm_back)
-latterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25)(latter_concat)
+latterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                  activity_regularizer=reg)(latter_concat)
 latterLstmDp = Dropout(.25)(latterLstm)
 latterLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25)(latter_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                       activity_regularizer=reg)(latter_concat)
 latterLstm_backDp = Dropout(.25)(latterLstm_back)
-afterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25)(after_concat)
+afterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                  activity_regularizer=reg)(after_concat)
 afterLstmDp = Dropout(.25)(afterLstm)
 afterLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                      recurrent_dropout=.25)(after_concat)
+                      recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
+                       activity_regularizer=reg)(after_concat)
 afterLstm_backDp = Dropout(.25)(afterLstm_back)
 
 
@@ -271,7 +288,7 @@ history = model.fit(x={
                         'after_postags': aps_train,
                         'after_hypernyms': ahs_train
                     },
-                    y={'output': labels_train}, batch_size=64, epochs=100,
+                    y={'output': labels_train}, batch_size=64, epochs=1,
                     validation_data=({
                                          'before_words': bws_valid,
                                          'before_lemmas': bls_valid,
