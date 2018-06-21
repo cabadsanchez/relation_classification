@@ -142,44 +142,34 @@ base_lstm = LSTM(num_hidden_cells, return_sequences=True)
 reg = l1_l2(.01, .01)
 
 beforeLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
-                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                  activity_regularizer=reg)(before_concat)
+                  kernel_regularizer=reg)(before_concat)
 beforeLstmDp = Dropout(.25)(beforeLstm)
 beforeLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                       activity_regularizer=reg)(before_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg)(before_concat)
 beforeLstm_backDp = Dropout(.25)(beforeLstm_back)
 formerLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
-                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                  activity_regularizer=reg)(former_concat)
+                  kernel_regularizer=reg)(former_concat)
 formerLstmDp = Dropout(.25)(formerLstm)
 formerLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                       activity_regularizer=reg)(former_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg)(former_concat)
 formerLstm_backDp = Dropout(.25)(formerLstm_back)
 middleLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
-                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                  activity_regularizer=reg)(middle_concat)
+                  kernel_regularizer=reg)(middle_concat)
 middleLstmDp = Dropout(.25)(middleLstm)
 middleLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                       activity_regularizer=reg)(middle_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg)(middle_concat)
 middleLstm_backDp = Dropout(.25)(middleLstm_back)
 latterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
-                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                  activity_regularizer=reg)(latter_concat)
+                  kernel_regularizer=reg)(latter_concat)
 latterLstmDp = Dropout(.25)(latterLstm)
 latterLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                       recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                       activity_regularizer=reg)(latter_concat)
+                       recurrent_dropout=.25, kernel_regularizer=reg)(latter_concat)
 latterLstm_backDp = Dropout(.25)(latterLstm_back)
 afterLstm = LSTM(num_hidden_cells, return_sequences=True, dropout=.25, recurrent_dropout=.25,
-                  kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                  activity_regularizer=reg)(after_concat)
+                  kernel_regularizer=reg)(after_concat)
 afterLstmDp = Dropout(.25)(afterLstm)
 afterLstm_back = LSTM(num_hidden_cells, return_sequences=True, go_backwards=True, dropout=.25,
-                      recurrent_dropout=.25, kernel_regularizer=reg, recurrent_regularizer=reg, bias_regularizer=reg,
-                       activity_regularizer=reg)(after_concat)
+                      recurrent_dropout=.25, kernel_regularizer=reg)(after_concat)
 afterLstm_backDp = Dropout(.25)(afterLstm_back)
 
 
