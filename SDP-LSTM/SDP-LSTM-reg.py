@@ -166,6 +166,36 @@ maxPoolingPosTags_2_3 = MaxPooling1D()(posTagsLSTM_2_3)
 maxPoolingHypernyms_2_3 = MaxPooling1D()(hypernymsLSTM_2_3)
 
 
+wordsLSTM_1_4 = LSTM(num_cells_words, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(wordsLSTM_1_2)
+lemmasLSTM_1_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(lemmasLSTM_1_2)
+posTagsLSTM_1_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(posTagsLSTM_1_2)
+hypernymsLSTM_1_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(hypernymsLSTM_1_2)
+
+wordsLSTM_2_4 = LSTM(num_cells_words, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(wordsLSTM_2_2)
+lemmasLSTM_2_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(lemmasLSTM_2_2)
+posTagsLSTM_2_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(posTagsLSTM_2_2)
+hypernymsLSTM_2_4 = LSTM(num_cells_embed, return_sequences=True, dropout=.25, recurrent_dropout=.25,
+                  kernel_regularizer=reg)(hypernymsLSTM_2_2)
+
+
+maxPoolingWords_1_4 = MaxPooling1D()(wordsLSTM_1_4)
+maxPoolingLemmas_1_4 = MaxPooling1D()(lemmasLSTM_1_4)
+maxPoolingPosTags_1_4 = MaxPooling1D()(posTagsLSTM_1_4)
+maxPoolingHypernyms_1_4 = MaxPooling1D()(hypernymsLSTM_1_4)
+
+maxPoolingWords_2_4 = MaxPooling1D()(wordsLSTM_2_4)
+maxPoolingLemmas_2_4 = MaxPooling1D()(lemmasLSTM_2_4)
+maxPoolingPosTags_2_4 = MaxPooling1D()(posTagsLSTM_2_4)
+maxPoolingHypernyms_2_4 = MaxPooling1D()(hypernymsLSTM_2_4)
+
+
 flattenWords_1_1 = Flatten()(maxPoolingWords_1_1)
 flattenLemmas_1_1 = Flatten()(maxPoolingLemmas_1_1)
 flattenPosTags_1_1 = Flatten()(maxPoolingPosTags_1_1)
@@ -190,6 +220,14 @@ flattenWords_2_3 = Flatten()(maxPoolingWords_2_3)
 flattenLemmas_2_3 = Flatten()(maxPoolingLemmas_2_3)
 flattenPosTags_2_3 = Flatten()(maxPoolingPosTags_2_3)
 flattenHypernyms_2_3 = Flatten()(maxPoolingHypernyms_2_3)
+flattenWords_1_4  = Flatten()(maxPoolingWords_1_4 )
+flattenLemmas_1_4 = Flatten()(maxPoolingLemmas_1_4)
+flattenPosTags_1_4 = Flatten()(maxPoolingPosTags_1_4)
+flattenHypernyms_1_4 = Flatten()(maxPoolingHypernyms_1_4)
+flattenWords_2_4 = Flatten()(maxPoolingWords_2_4)
+flattenLemmas_2_4 = Flatten()(maxPoolingLemmas_2_4)
+flattenPosTags_2_4 = Flatten()(maxPoolingPosTags_2_4)
+flattenHypernyms_2_4 = Flatten()(maxPoolingHypernyms_2_4)
 
 concat = concatenate([flattenWords_1_1,
                       flattenLemmas_1_1,
@@ -214,7 +252,16 @@ concat = concatenate([flattenWords_1_1,
                       flattenWords_2_3,
                       flattenLemmas_2_3,
                       flattenPosTags_2_3,
-                      flattenHypernyms_2_3])
+                      flattenHypernyms_2_3,
+                      flattenWords_1_4,
+                      flattenLemmas_1_4,
+                      flattenPosTags_1_4,
+                      flattenHypernyms_1_4,
+                      flattenWords_2_4,
+                      flattenLemmas_2_4,
+                      flattenPosTags_2_4,
+                      flattenHypernyms_2_4
+                      ])
 
 
 dense = Dense(100, activation='relu')(concat)
