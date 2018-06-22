@@ -209,7 +209,7 @@ model.summary()
 rms_optimizer = keras.optimizers.RMSprop(lr=0.001)
 model.compile(loss='sparse_categorical_crossentropy', optimizer=rms_optimizer, metrics=['accuracy'])
 
-tbCallBack = TensorBoard(log_dir='../dumps/logs/Bi-LSTM-RNN-1',
+tbCallBack = TensorBoard(log_dir='../dumps/logs/SDP-LSTM',
                          histogram_freq=1,
                          write_graph=True,
                          write_grads=True,
@@ -242,7 +242,8 @@ history = model.fit(x={'subpath1_words': wordSequence_1_train,
                                       'subpath2_lemmas': lemmaSequence_2_valid,
                                       'subpath2_pos': posTagSequence_2_valid,
                                       'subpath2_hypernyms': hypernymSequence_2_valid},
-                                     {'output': labels_valid}))
+                                     {'output': labels_valid}),
+                    callbacks=[tbCallBack, reduce_lr, early_stop])
 
 with gzip.open('../dumps/history.pkl.gz', mode='wb') as f:
     pickle.dump(history.history, f, protocol=3)
