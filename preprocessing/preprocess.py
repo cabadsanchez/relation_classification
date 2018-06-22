@@ -168,9 +168,10 @@ def load_and_process(fname, nlp):
     df = df.drop(['before', 'former', 'middle', 'latter', 'after'], axis=1)
     print('\t{} seconds'.format(time() - init))
 
-    # get shortest dependency path between e1 and e2
+    # get shortest dependency subpaths between e1 and e2
+    print('get shortest dependency subpaths between e1 and e2')
     init = time()
-    df['sdp'] = df.apply(lambda row: get_shortest_dependency_path(row), axis=1)
+    df = df.apply(lambda row: get_dependency_subpaths(row), axis=1)
     print('\t{} seconds'.format(time() - init))
 
     print()
@@ -226,28 +227,126 @@ def get_hypernym(word, pos):
 
     return word
 
-def get_shortest_dependency_path(row):
+
+def get_dependency_subpaths(row):
+    doc = row.spacy_doc
+    e1 = row.token_e1
+    e2 = row.token_e2
+    lca = doc.get_lca_matrix()[e1, e2]
+
     edges = []
-    for token in row.spacy_doc:
+    for token in doc:
         for child in token.children:
             edges.append((token.i, child.i))
+
     g = nx.Graph(edges)
     try:
-        shortest_path = nx.shortest_path(g, row.token_e1, row.token_e2)
+        shortest_path = nx.shortest_path(g, e1, e2)
     except:
-        print('No path between e1 and e2 at index {}, trying e2 -> e1...'.format(row.name))
-        try:
-            shortest_path = nx.shortest_path(g, row.token_e2, row.token_e1)
-        except:
-            print('No path between e2 and e1.')
-            shortest_path = []
-    shortest_dependency_path = [row.spacy_doc[node].lower_ for node in shortest_path]
-    return shortest_dependency_path
+        print('No path between e1 and e2 for row {}.'.format(row.name))
+        row['shortest_subpath_1'] = None
+        row['shortest_subpath_2'] = None
+        row['shortest_subpath_lemmas_1'] = None
+        row['shortest_subpath_lemmas_2'] = None
+        row['shortest_subpath_pos_1'] = None
+        row['shortest_subpath_pos_2'] = None
+        row['shortest_subpath_hypernyms_1'] = None
+        row['shortest_subpath_hypernyms_2'] = None
+        row['subpath_1'] = None
+        row['subpath_2'] = None
+        row['subpath_lemmas_1'] = None
+        row['subpath_lemmas_2'] = None
+        row['subpath_pos_1'] = None
+        row['subpath_pos_2'] = None
+        row['subpath_hypernyms_1'] = None
+        row['subpath_hypernyms_2'] = None
+        return row
+
+    shortest_subpath_1 = []
+    shortest_subpath_2 = []
+    shortest_subpath_lemmas_1 = []
+    shortest_subpath_lemmas_2 = []
+    shortest_subpath_pos_1 = []
+    shortest_subpath_pos_2 = []
+    shortest_subpath_hypernyms_1 = []
+    shortest_subpath_hypernyms_2 = []
+
+    subpath_1 = []
+    subpath_2 = []
+    subpath_lemmas_1 = []
+    subpath_lemmas_2 = []
+    subpath_pos_1 = []
+    subpath_pos_2 = []
+    subpath_hypernyms_1 = []
+    subpath_hypernyms_2 = []
+
+    for i in nx.shortest_path(g, source=e1, target=lca):
+        subpath_1.append(doc[i])
+    for i in nx.shortest_path(g, source=e2, target=lca):
+        subpath_2.append(doc[i])
+
+    for token in subpath_1:
+        subpath_lemmas_1.append(token.lemma_)
+        subpath_pos_1.append(token.pos_)
+        subpath_hypernyms_1.append(get_hypernym(token.lower_, token.pos_))
+    for token in subpath_2:
+        subpath_lemmas_2.append(token.lemma_)
+        subpath_pos_2.append(token.pos_)
+        subpath_hypernyms_2.append(get_hypernym(token.lower_, token.pos_))
+
+    subpath_1 = [token.lower_ for token in subpath_1]
+    subpath_2 = [token.lower_ for token in subpath_2]
+
+    if lca not in shortest_path:
+        for i in nx.shortest_path(g, e1, e2):
+            shortest_subpath_1.append(doc[i])
+        for i in nx.shortest_path(g, e2, e1):
+            shortest_subpath_2.append(doc[i])
+
+        for token in shortest_subpath_1:
+            shortest_subpath_lemmas_1.append(token.lemma_)
+            shortest_subpath_pos_1.append(token.pos_)
+            shortest_subpath_hypernyms_1.append(get_hypernym(token.lower_, token.pos_))
+        for token in shortest_subpath_2:
+            shortest_subpath_lemmas_2.append(token.lemma_)
+            shortest_subpath_pos_2.append(token.pos_)
+            shortest_subpath_hypernyms_2.append(get_hypernym(token.lower_, token.pos_))
+
+        shortest_subpath_1 = [token.lower_ for token in shortest_subpath_1]
+        shortest_subpath_2 = [token.lower_ for token in shortest_subpath_2]
+    else:
+        shortest_subpath_1 = [token for token in subpath_1]
+        shortest_subpath_2 = [token for token in subpath_2]
+        shortest_subpath_lemmas_1 = [token for token in subpath_lemmas_1]
+        shortest_subpath_lemmas_2 = [token for token in subpath_lemmas_2]
+        shortest_subpath_pos_1 = [token for token in subpath_pos_1]
+        shortest_subpath_pos_2 = [token for token in subpath_pos_2]
+        shortest_subpath_hypernyms_1 = [token for token in subpath_hypernyms_1]
+        shortest_subpath_hypernyms_2 = [token for token in subpath_hypernyms_2]
+
+    row['shortest_subpath_1'] = shortest_subpath_1
+    row['shortest_subpath_2'] = shortest_subpath_2
+    row['shortest_subpath_lemmas_1'] = shortest_subpath_lemmas_1
+    row['shortest_subpath_lemmas_2'] = shortest_subpath_lemmas_2
+    row['shortest_subpath_pos_1'] = shortest_subpath_pos_1
+    row['shortest_subpath_pos_2'] = shortest_subpath_pos_2
+    row['shortest_subpath_hypernyms_1'] = shortest_subpath_hypernyms_1
+    row['shortest_subpath_hypernyms_2'] = shortest_subpath_hypernyms_2
+    row['subpath_1'] = subpath_1
+    row['subpath_2'] = subpath_2
+    row['subpath_lemmas_1'] = subpath_lemmas_1
+    row['subpath_lemmas_2'] = subpath_lemmas_2
+    row['subpath_pos_1'] = subpath_pos_1
+    row['subpath_pos_2'] = subpath_pos_2
+    row['subpath_hypernyms_1'] = subpath_hypernyms_1
+    row['subpath_hypernyms_2'] = subpath_hypernyms_2
+
+    return row
 
 if __name__ == '__main__':
     print('Loading spaCy model (en_core_web_lg)...')
     nlp = spacy.load('en_core_web_lg')
-    print(nlp.pipeline)
+
     print('Preprocessing train set...')
     init = time()
     train = load_and_process('../data/semeval2010_task8/train.txt', nlp)

@@ -282,7 +282,7 @@ history = model.fit(x={
                     callbacks=[tbCallBack, reduce_lr, early_stop])
 
 with gzip.open('../dumps/history.pkl.gz', mode='wb') as f:
-    pickle.dump(history, f, protocol=3)
+    pickle.dump(history.history, f, protocol=3)
 
 model.save('../dumps/Bi-LSTM-RNN-1.h5')
 plot_model(model, to_file='../dumps/Bi-LSTM-RNN-1.png')
