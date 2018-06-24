@@ -1,0 +1,19 @@
+#! /bin/bash
+
+source activate tfm
+
+git clone git@github.com:cabadsanchez/relation_classification.git
+
+cd relation_classification
+
+mkdir dumps
+
+gsutil cp gs://storage-tfm/data_Bi-LSTM-SDP.pkl.gz dumps/
+
+cd Bi-LSTM-SDP
+
+python Bi-LSTM-ATT-SDP.py >> ../dumps/Bi-LSTM-ATT-SDP.log
+
+gsutil -m cp -r ../dumps gs://storage-tfm/Bi-LSTM-SDP-ATT/
+
+sudo shutdown -h now
