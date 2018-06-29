@@ -36,8 +36,8 @@ pos_embeddings = Embedding(max_pos_features, rand_embed_dim, trainable=True, nam
 emb_concat = concatenate([word_embeddings, pos_embeddings], name='emb_concat')
 
 reg = l1_l2(.005, .005)
-l_lstm = Bidirectional(LSTM(64, return_sequences=True, dropout=.4,
-                            recurrent_dropout=.4, kernel_regularizer=reg), name='bi_lstm')(emb_concat)
+l_lstm = Bidirectional(LSTM(32, return_sequences=True, dropout=.4,
+                            recurrent_dropout=.4), name='bi_lstm')(emb_concat)
 
 l_att = Attention()(l_lstm)
 
@@ -77,7 +77,7 @@ history = model.fit(x={'words_input': wordSequence_train,
                     callbacks=[tbCallBack, reduce_lr, early_stop])
 
 def predict_classes(predictions):
-    predictions.argmax(axis=-1)
+    return predictions.argmax(axis=-1)
 
 print('Predicting test classes...')
 pred_test = predict_classes(model.predict([wordSequence_test, posTagSequence_test], verbose=True))
