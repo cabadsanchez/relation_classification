@@ -35,9 +35,9 @@ pos_embeddings = Embedding(max_pos_features, rand_embed_dim, trainable=True, nam
 
 emb_concat = concatenate([word_embeddings, pos_embeddings], name='emb_concat')
 
-reg = l1_l2(.01, .01)
-l_lstm = Bidirectional(LSTM(64, return_sequences=True, dropout=.25,
-                            recurrent_dropout=.25, kernel_regularizer=reg), name='bi_lstm')(emb_concat)
+reg = l1_l2(.005, .005)
+l_lstm = Bidirectional(LSTM(64, return_sequences=True, dropout=.4,
+                            recurrent_dropout=.4, kernel_regularizer=reg), name='bi_lstm')(emb_concat)
 
 l_att = Attention()(l_lstm)
 
@@ -58,7 +58,9 @@ tbCallBack = TensorBoard(log_dir='../dumps/logs/Bi-LSTM-ATT-SDP',
 reduce_lr = ReduceLROnPlateau(monitor='val_loss',
                               factor=0.1,
                               patience=5,
-                              min_lr=0.00001)
+                              min_lr=0.000001,
+                              verbose=1,
+                              min_delta=.005)
 
 early_stop = EarlyStopping(monitor='val_loss',
                            patience=15)
@@ -74,8 +76,18 @@ history = model.fit(x={'words_input': wordSequence_train,
                                      {'predictions': labels_valid}),
                     callbacks=[tbCallBack, reduce_lr, early_stop])
 
+def predict_classes(predictions):
+    predictions.argmax(axis=-1)
+
+print('Predicting test classes...')
+pred_test = predict_classes(model.predict([wordSequence_test, posTagSequence_test], verbose=True))
+
 with gzip.open('../dumps/history.pkl.gz', mode='wb') as f:
     pickle.dump(history.history, f, protocol=3)
 
-model.save('../dumps/SDP-LSTM.h5')
+with gzip.open('../dumps/pred_test.pkl.gz', mode='wb') as f:
+    pickle.dump(pred_test, f, protocol=3)
+
+# model.save('../dumps/SDP-LSTM.h5')
+model.save_weights('../dumps/Bi-LSTM-SDP-weights.h5')
 plot_model(model, to_file='../dumps/SDP-LSTM.png')
